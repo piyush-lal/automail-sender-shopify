@@ -176,6 +176,10 @@ async function processBulkEmails(
         userId: user._id,
         businessEmail: contact.email,
         businessName: contact.name,
+        subject: personalizedSubject,
+        message: personalizedMessage,
+        hasAttachment: !!(attachmentData.buffer && attachmentData.name),
+        attachmentName: attachmentData.name || undefined,
         status,
         ...(errorMessage ? { errorMessage } : {}),
       });

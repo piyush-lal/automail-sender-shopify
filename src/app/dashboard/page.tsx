@@ -74,9 +74,9 @@ export default function DashboardPage() {
       const contactsData = await contactsRes.json();
       const logsData = await logsRes.json();
       const dnsData = await dnsRes.json();
-      setContacts(contactsData);
-      setLogs(logsData);
-      setDoNotSendList(dnsData);
+      setContacts(Array.isArray(contactsData) ? contactsData : []);
+      setLogs(Array.isArray(logsData) ? logsData : []);
+      setDoNotSendList(Array.isArray(dnsData) ? dnsData : []);
     } catch (err) {
       console.error(err);
     }
