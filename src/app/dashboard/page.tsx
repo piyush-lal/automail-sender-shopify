@@ -326,7 +326,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {activeCampaign && activeCampaign.status === 'running' && (
+      {activeCampaign && activeCampaign.status === 'running' && activeCampaign.processedCount < activeCampaign.totalContacts && (
         <div className="bg-white border border-outline-variant rounded-xl shadow-sm p-4 sm:p-6 mb-4">
           <div className="flex justify-between items-center mb-4">
             <div>
