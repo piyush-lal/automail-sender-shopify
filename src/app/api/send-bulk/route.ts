@@ -3,6 +3,7 @@ import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import EmailLog from '@/models/EmailLog';
 import CampaignJob from '@/models/CampaignJob';
+import Contact from '@/models/Contact';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import nodemailer from 'nodemailer';
@@ -37,14 +38,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'No contacts selected' }, { status: 400 });
     }
 
-    // Read all contacts and filter by the selected URLs
-    const filePath = path.join(process.cwd(), 'src', 'data', 'shopify_partners_details.json');
-    const data = await fs.readFile(filePath, 'utf8');
-    const allContacts = JSON.parse(data);
-    
-    // Create a Set for fast lookup
-    const urlSet = new Set(contactUrls);
-    const contacts = allContacts.filter((c: any) => urlSet.has(c.url));
+    await dbConnect();
+    const contacts = await Contact.find({ url: { $in: contactUrls } }).lean();
 
     if (contacts.length === 0) {
       return NextResponse.json({ message: 'No matching contacts found' }, { status: 400 });
