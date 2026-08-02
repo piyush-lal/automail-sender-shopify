@@ -27,7 +27,7 @@ Follow these steps to run the project locally on your machine.
 ### 2. Installation
 Clone the repository and install the dependencies:
 ```bash
-git clone <your-repo-link>
+git clone https://github.com/piyush-lal/automail-sender-shopify.git
 cd email_sender
 npm install
 ```
@@ -40,7 +40,7 @@ cp .env.example .env.local
 
 Inside `.env.local`, ensure you have:
 ```env
-MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/email_sender?retryWrites=true&w=majority"
+MONGODB_URI="mongodb://localhost:27017/your_database_name"
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your_super_secret_key_here"
 ```
