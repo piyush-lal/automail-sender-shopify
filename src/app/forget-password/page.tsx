@@ -1,8 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 export default function ForgetPasswordPage() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      alert("Reset link sent!");
+    }, 1500);
+  };
+
   return (
     <div className="bg-mesh min-h-screen flex flex-col font-body-md text-on-surface">
       <main className="flex-grow flex items-center justify-center p-container-padding">
@@ -11,7 +24,7 @@ export default function ForgetPasswordPage() {
             <h2 className="font-headline-md text-2xl font-semibold text-on-surface mb-2">Reset Password</h2>
             <p className="font-body-sm text-sm text-on-surface-variant">Enter your email to receive a reset link.</p>
           </div>
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="font-label-md text-sm font-medium text-on-surface" htmlFor="email">Email Address</label>
               <div className="relative group">
@@ -22,8 +35,12 @@ export default function ForgetPasswordPage() {
               </div>
             </div>
             
-            <button type="submit" className="w-full h-11 bg-primary text-white rounded-lg font-label-md text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm">
-              Send Reset Link
+            <button type="submit" disabled={isLoading} className="w-full h-11 bg-primary text-white rounded-lg font-label-md text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-70">
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                "Send Reset Link"
+              )}
             </button>
 
             <div className="text-center">

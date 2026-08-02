@@ -12,12 +12,14 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setIsLoading(true);
     try {
       const res = await fetch("/api/register", {
         method: "POST",
@@ -30,6 +32,7 @@ export default function RegisterPage() {
       if (!res.ok) {
         const data = await res.json();
         setError(data.message || "Something went wrong");
+        setIsLoading(false);
         return;
       }
 
@@ -39,6 +42,7 @@ export default function RegisterPage() {
       }, 2000);
     } catch (err) {
       setError("An error occurred");
+      setIsLoading(false);
     }
   };
 
@@ -105,10 +109,15 @@ export default function RegisterPage() {
                 </button>
               </div>
             </div>
-            
-            <button type="submit" className="w-full h-11 bg-primary text-white rounded-lg font-label-md text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2">
-              Sign Up
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            <button type="submit" disabled={isLoading} className="w-full h-11 bg-primary text-white rounded-lg font-label-md text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-70">
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  Sign Up
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </>
+              )}
             </button>
           </form>
         </div>

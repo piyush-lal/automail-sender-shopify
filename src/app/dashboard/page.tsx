@@ -60,11 +60,14 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const [isDataLoading, setIsDataLoading] = useState(true);
+
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    setIsDataLoading(true);
     try {
       const [contactsRes, logsRes, dnsRes] = await Promise.all([
         fetch("/api/contacts"),
@@ -79,6 +82,8 @@ export default function DashboardPage() {
       setDoNotSendList(Array.isArray(dnsData) ? dnsData : []);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsDataLoading(false);
     }
   };
 
@@ -167,10 +172,18 @@ export default function DashboardPage() {
     return currentList.slice(start, start + itemsPerPage);
   }, [currentList, currentPage]);
 
+  const [isTabLoading, setIsTabLoading] = useState(false);
+
   const handleTabChange = (tab: Tab) => {
+    setIsTabLoading(true);
     setActiveTab(tab);
     setCurrentPage(1);
     setSelectedContacts([]);
+    
+    // Slight artificial delay for smooth UX when switching large tabs
+    setTimeout(() => {
+      setIsTabLoading(false);
+    }, 400);
   };
 
   const selectCurrentPage = () => {
@@ -477,8 +490,24 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {paginatedList.map((contact) => {
-                const isSelected = !!selectedContacts.find(c => c.url === contact.url);
+              {(isDataLoading || isTabLoading) ? (
+                <tr>
+                  <td colSpan={6} className="p-10 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                      <span className="font-label-md text-on-surface-variant">Loading contacts...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : paginatedList.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-10 text-center font-body-md text-on-surface-variant">
+                    No contacts found for this criteria.
+                  </td>
+                </tr>
+              ) : (
+                paginatedList.map((contact) => {
+                  const isSelected = !!selectedContacts.find(c => c.url === contact.url);
                 return (
                   <tr key={contact.url} onClick={() => setViewContact(contact)} className={`border-b border-outline-variant hover:bg-surface transition-colors cursor-pointer ${isSelected ? 'bg-primary-fixed-dim/20' : ''}`}>
                     {(activeTab === 'unsent' || activeTab === 'sent' || activeTab === 'failed') && (
@@ -517,12 +546,7 @@ export default function DashboardPage() {
                     </td>
                   </tr>
                 );
-              })}
-              {paginatedList.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center text-on-surface-variant font-medium">No contacts found in this view.</td>
-                </tr>
-              )}
+              }))}
             </tbody>
           </table>
         </div>

@@ -13,9 +13,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
     const res = await signIn("credentials", {
       email,
       password,
@@ -24,6 +27,7 @@ export default function LoginPage() {
 
     if (res?.error) {
       setError("Invalid email or password");
+      setIsLoading(false);
     } else {
       router.push("/dashboard");
       router.refresh();
@@ -123,9 +127,15 @@ export default function LoginPage() {
                   </div>
                 </div>
                 
-                <button type="submit" className="w-full h-11 bg-primary text-white rounded-lg font-label-md text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2">
-                  Sign In
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                <button type="submit" disabled={isLoading} className="w-full h-11 bg-primary text-white rounded-lg font-label-md text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-70">
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      Sign In
+                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </>
+                  )}
                 </button>
               </form>
             </div>
