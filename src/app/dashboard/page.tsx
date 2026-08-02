@@ -36,6 +36,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let interval: any;
+    let lastStatus = ''; // Track status to prevent infinite refetching
     const fetchCampaignStatus = async () => {
       try {
         const res = await fetch('/api/campaign-status');
@@ -43,9 +44,11 @@ export default function DashboardPage() {
         const data = await res.json();
         if (data.active && data.job) {
           setActiveCampaign(data.job);
-          if (data.job.status !== 'running') {
+          // Only refetch contacts if it just finished running
+          if (data.job.status !== 'running' && lastStatus === 'running') {
             fetchData();
           }
+          lastStatus = data.job.status;
         } else {
           setActiveCampaign(null);
         }
